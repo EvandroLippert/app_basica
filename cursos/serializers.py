@@ -7,6 +7,7 @@ Ou seja, auxilia no registro e na busca de objetos dos models.
 """
 
 from rest_framework import serializers
+from django.db.models import Avg
 
 from .models import Curso, Avaliacao
 
@@ -35,6 +36,16 @@ class AvaliacaoSerializer(serializers.ModelSerializer):
             'ativo'
         )
 
+    """
+    Criar função para validar os dados inseridos
+    def validate_nome_do_campo()
+    """
+
+    def validate_avaliacao(self, valor):
+        if valor in range(0, 6):
+            return valor
+        raise serializers.ValidationError("A avaliação precisa ser um valor entre 0 e 5")
+
 
 class CursoSerializer(serializers.ModelSerializer):
     """
@@ -56,6 +67,8 @@ class CursoSerializer(serializers.ModelSerializer):
 
     avaliacoes = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='avaliacao-detail')
 
+    media_avaliacoes = serializers.SerializerMethodField()
+
     class Meta:
         model = Curso
         fields = (
@@ -64,5 +77,24 @@ class CursoSerializer(serializers.ModelSerializer):
             'url',
             'criacao',
             'ativo',
-            'avaliacoes'
+            'avaliacoes',
+            'media_avaliacoes'
         )
+
+    """
+    Para exibir um valor que não é inserido pelo usuário, como a média, por exemplo,
+    Devemos instanciar o item, no caso "media_avaliacoes" e criar uma função para formar o valor.
+    
+    O padrão do nome da função é get_nome_do_campo_criado.
+    
+    No nosso caso, é get_media_avaliacoes
+    
+    """
+
+    def get_media_avaliacoes(self, obj):
+        media = obj.avaliacoes.aggregate(Avg('avaliacao')).get('avaliacao__avg')
+
+        if media is None:
+            return 0
+
+        return round(media * 2) / 2

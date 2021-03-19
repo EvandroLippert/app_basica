@@ -5,9 +5,13 @@ from rest_framework import mixins
 
 from cursos.models import Curso, Avaliacao
 from cursos.serializers import CursoSerializer, AvaliacaoSerializer
+from .permissions import IsSuperUser
 
 
 class CursoViewSet(viewsets.ModelViewSet):
+    permission_classes = (
+        IsSuperUser,
+                          )
     queryset = Curso.objects.all()
     serializer_class = CursoSerializer
 
