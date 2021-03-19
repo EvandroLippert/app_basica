@@ -17,6 +17,7 @@ class Curso(Base):
     class Meta:
         verbose_name = 'Curso'
         verbose_name_plural = 'Cursos'
+        ordering = ['id']
 
     def __str__(self):
         return self.titulo
@@ -27,13 +28,14 @@ class Avaliacao(Base):
     nome = models.CharField(max_length=255)
     email = models.EmailField()
     comentario = models.TextField(blank=True, default='')
-    avaliacao = models.DecimalField(max_digits=10, decimal_places=1)
+    avaliacao = models.DecimalField(max_digits=2, decimal_places=1)
 
     class Meta:
         verbose_name = 'Avaliação'
         verbose_name_plural = 'Avaliações'
         unique_together = ['email', 'curso']  # Impossibilita que uma pessoa com o mesmo e-mail avalie mais de uma vez \
-                                              # o mesmo curso
+        # o mesmo curso
+        ordering = ['id']
 
     def __str__(self):
         return f"{self.nome} avaliou o curso {self.curso} com note {self.avaliacao}"

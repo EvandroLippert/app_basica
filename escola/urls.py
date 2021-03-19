@@ -16,6 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from cursos_v2.urls import router
+
+
 """
 Importante na criação da rota para a API especificar o versionamento dela,
 
@@ -28,4 +31,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('rest_framework.urls')),
     path('api/v1/', include('cursos.urls')),
+    path('api/v2/', include(router.urls)),
 ]
